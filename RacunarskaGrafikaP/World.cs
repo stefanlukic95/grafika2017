@@ -29,8 +29,14 @@ namespace AssimpSample
         private int m_height;
         private int m_depth;
 
+        private float ambientR = 0.0f;
+        private float ambientG = 0.0f;
+        private float ambientB = 0.3f;
+        private float ambientU = 1.0f;
 
+        private float targetValueTranslate = 1000.0f;
 
+        private float wallVal = 1.0f;
 
         public AssimpScene Scene
         {
@@ -88,6 +94,32 @@ namespace AssimpSample
         }
 
 
+        /// <summary>
+        /// Odredjuje rotiranje
+        /// </summary>
+        public float TargetValueTranslate
+        {
+            get
+            {
+                return targetValueTranslate;
+            }
+            set
+            {
+                targetValueTranslate = value;
+            }
+        }
+
+      public float wallValue
+        {
+            get
+            {
+                return wallVal;
+            }
+            set
+            {
+                wallVal = value;
+            }
+        }
 
         public World(String scenePath, String sceneFileName, String scenePath1, String sceneFileName1, int width, int height, OpenGL gl)
         {
@@ -120,12 +152,64 @@ namespace AssimpSample
             {
                 gl.Enable(OpenGL.GLU_CULLING);
             }
+
+            gl.FrontFace(OpenGL.GL_CCW);
+            gl.Enable(OpenGL.GL_COLOR_MATERIAL);
+            gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
+
+
+            setupLighting(gl);
+            setupTargetLight(gl);
+
             m_scene.LoadScene();
             m_scene.Initialize();
             m_strela.LoadScene();
             m_strela.Initialize();
         }
 
+        /// <summary>
+        /// Podesava osvetljenje u scecni
+        /// </summary>
+        /// <param name="gl"></param>
+        public void setupLighting(OpenGL gl)
+        {
+            float[] ambijentalnaKomponenta = { 0.3f, 0.3f, 0.3f, 1.0f };
+            float[] difuznaKomponenta = { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] lightPos0 = { -600.0f, 600.0f, 650.0f };
+            //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
+
+            //podesavanje cuttoff-a na 180 da bi svetlost bila tackasta
+            gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT0);
+
+            gl.Enable(OpenGL.GL_NORMALIZE);
+        }
+
+        public void setupTargetLight(OpenGL gl)
+        {
+            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, ambientU };
+            float[] difuznaKomponenta = { 0.0f, 0.0f, 0.7f, 1.0f };
+            float[] lightPos1 = { 200.0f, 500.0f, -700.0f, 1.0f };
+            float[] smer = { 0.0f, -1.0f, 0.0f };
+
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
+            // Podesi parametre reflektorkskog izvora
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 45.0f);
+
+            gl.Enable(OpenGL.GL_LIGHTING);
+            gl.Enable(OpenGL.GL_LIGHT1);
+            // Pozicioniraj svetlosni izvor
+            gl.Enable(OpenGL.GL_NORMALIZE);
+
+        }
 
         public void Resize(OpenGL gl, int width, int height)
         {
@@ -137,6 +221,9 @@ namespace AssimpSample
             gl.Perspective(60f, (double)width / height, 1f, 20000f);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
+
+            
+
         }
 
         public void Draw(OpenGL gl)
@@ -146,6 +233,9 @@ namespace AssimpSample
             gl.PushMatrix();
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
+            gl.LookAt(0.0f, 670.0f, 350.0f,
+                   0.0f, 600.0f, 0.0f,
+                   0.0f, 1.0f, 0.0f);
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
@@ -252,9 +342,11 @@ namespace AssimpSample
         public void drawCube1(OpenGL gl)
         {
             gl.PushMatrix();
-            gl.Translate(1000.0f, 330.0f, 0.0f);
+            //gl.Translate(1000.0f, 330.0f, 0.0f);
+            gl.Translate(targetValueTranslate, 330.0f, 0.0f);
             gl.Scale(100, 300, 1500);
             gl.Color(1.0f, 1.0f, 1.0f);
+         
             Cube cube = new Cube();
             cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
             gl.PopMatrix();
@@ -265,10 +357,13 @@ namespace AssimpSample
         {
             gl.PushMatrix();
             gl.Translate(-1000.0f, 330.0f, 0.0f);
+            gl.Rotate(0.0f, wallVal, 0.0f);
             gl.Scale(100, 300, 1500);
             gl.Color(1.0f, 1.0f, 1.0f);
+            
             Cube cube = new Cube();
             cube.Render(gl, SharpGL.SceneGraph.Core.RenderMode.Render);
+            
             gl.PopMatrix();
 
         }

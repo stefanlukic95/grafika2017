@@ -17,6 +17,7 @@ using SharpGL;
 using Microsoft.Win32;
 using AssimpSample;
 using Assimp;
+using System.Globalization;
 
 namespace RacunarskaGrafikaP
 {
@@ -89,11 +90,11 @@ namespace RacunarskaGrafikaP
         {
             switch (e.Key)
             {
-                case Key.F10: this.Close(); break;
-                case Key.W: m_world.RotationX -= 5.0f; break;
-                case Key.S: m_world.RotationX += 5.0f; break;
-                case Key.A: m_world.RotationY -= 5.0f; break;
-                case Key.D: m_world.RotationY += 5.0f; break;
+                case Key.F4: this.Close(); break;
+                case Key.I: m_world.RotationX -= 5.0f; break;
+                case Key.K: m_world.RotationX += 5.0f; break;
+                case Key.J: m_world.RotationY -= 5.0f; break;
+                case Key.L: m_world.RotationY += 5.0f; break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
  
@@ -118,5 +119,27 @@ namespace RacunarskaGrafikaP
                     break;
             }
         }
+        private void targetValueChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(targetTranslateVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+            if (m_world != null)
+            {
+                m_world.TargetValueTranslate = val;
+            }
+        }
+
+        private void wallValueChanged(object sender, TextChangedEventArgs e)
+        {
+            float val = float.Parse(wallVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+            if (m_world != null)
+            {
+                m_world.wallValue = val;
+            }
+        }
+
+     
+        
     }
 }

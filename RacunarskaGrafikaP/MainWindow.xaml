@@ -9,6 +9,15 @@
     xmlns:sharpGL="clr-namespace:SharpGL.WPF;assembly=SharpGL.WPF" KeyDown="Window_KeyDown">
     <Grid>
         <DockPanel>
+            <ToolBarTray DockPanel.Dock="Top">
+                <ToolBar HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label x:Name="targetHeight" Content="Transliranje desnog" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="targetTranslateVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="targetValueChanged"/>
+                    <Label x:Name="caliber" Content="Rotiranje levog" Height="26" VerticalAlignment="Top"/>
+                    <TextBox Name="wallVal" Width="120" Margin="0" Text="" VerticalAlignment="Center" HorizontalAlignment="Center" TextChanged="wallValueChanged"/>
+                   
+                </ToolBar>
+            </ToolBarTray>
             <sharpGL:OpenGLControl 
             Name="openGLControl" OpenGLDraw="openGLControl_OpenGLDraw" 
             OpenGLInitialized="openGLControl_OpenGLInitialized" Resized="openGLControl_Resized"
