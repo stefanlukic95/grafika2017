@@ -21,7 +21,7 @@ using System.Globalization;
 
 namespace RacunarskaGrafikaP
 {
-    
+
     public partial class MainWindow : Window
     {
         #region Atributi
@@ -38,14 +38,14 @@ namespace RacunarskaGrafikaP
 
         public MainWindow()
         {
-          
+
             InitializeComponent();
 
-           
+
             try
             {
-                
-                m_world = new World(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "C:\\Users\\Stefan\\Documents\\Visual Studio 2017\\Projects\\RacunarskaGrafikaP\\RacunarskaGrafikaP\\Model\\"), "castle2.obj", Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "C:\\Users\\Stefan\\Documents\\Visual Studio 2017\\Projects\\RacunarskaGrafikaP\\RacunarskaGrafikaP\\Model\\"), "Arrow shot.fbx",(int)openGLControl.Width, (int)openGLControl.Height,openGLControl.OpenGL);
+
+                m_world = new World(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "C:\\Users\\Stefan\\Documents\\Visual Studio 2017\\Projects\\RacunarskaGrafikaP\\RacunarskaGrafikaP\\Model\\"), "castle2.obj", Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "C:\\Users\\Stefan\\Documents\\Visual Studio 2017\\Projects\\RacunarskaGrafikaP\\RacunarskaGrafikaP\\Model\\"), "Arrow shot.fbx", (int)openGLControl.Width, (int)openGLControl.Height, openGLControl.OpenGL);
             }
             catch (Exception e)
             {
@@ -97,23 +97,23 @@ namespace RacunarskaGrafikaP
                 case Key.L: m_world.RotationY += 5.0f; break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
- 
+
                 case Key.F2:
                     OpenFileDialog opfModel = new OpenFileDialog();
-                    bool result = (bool) opfModel.ShowDialog();
+                    bool result = (bool)opfModel.ShowDialog();
                     if (result)
                     {
 
                         try
                         {
-                            World newWorld = new World(Directory.GetParent(opfModel.FileName).ToString(), Path.GetFileName(opfModel.FileName), Directory.GetParent(opfModel.FileName).ToString(), Path.GetFileName(opfModel.FileName),(int)openGLControl.Width, (int)openGLControl.Height, openGLControl.OpenGL);
+                            World newWorld = new World(Directory.GetParent(opfModel.FileName).ToString(), Path.GetFileName(opfModel.FileName), Directory.GetParent(opfModel.FileName).ToString(), Path.GetFileName(opfModel.FileName), (int)openGLControl.Width, (int)openGLControl.Height, openGLControl.OpenGL);
                             m_world.Dispose();
                             m_world = newWorld;
                             m_world.Initialize(openGLControl.OpenGL);
                         }
                         catch (Exception exp)
                         {
-                            MessageBox.Show("Neuspesno kreirana instanca OpenGL sveta:\n" + exp.Message, "GRESKA", MessageBoxButton.OK );
+                            MessageBox.Show("Neuspesno kreirana instanca OpenGL sveta:\n" + exp.Message, "GRESKA", MessageBoxButton.OK);
                         }
                     }
                     break;
@@ -121,25 +121,55 @@ namespace RacunarskaGrafikaP
         }
         private void targetValueChanged(object sender, TextChangedEventArgs e)
         {
-            float val = float.Parse(targetTranslateVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-            if (m_world != null)
+            try
             {
-                m_world.TargetValueTranslate = val;
+                float val = float.Parse(targetTranslateVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+                if (m_world != null)
+                {
+                    m_world.TargetValueTranslate = val;
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
             }
         }
 
         private void wallValueChanged(object sender, TextChangedEventArgs e)
         {
-            float val = float.Parse(wallVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-            if (m_world != null)
+            try
             {
-                m_world.wallValue = val;
+                float val = float.Parse(wallVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+                if (m_world != null)
+                {
+                    m_world.wallValue = val;
+                }
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
             }
         }
 
-     
+        private void arrowValueChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                float val = float.Parse(arrowVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+                if (m_world != null)
+                {
+                    m_world.arrowValue = val;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+            }
+        }
         
     }
 }

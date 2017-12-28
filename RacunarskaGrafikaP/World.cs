@@ -10,6 +10,8 @@ using SharpGL.SceneGraph.Core;
 using SharpGL;
 using RacunarskaGrafikaP;
 using System.Windows.Documents;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace AssimpSample
 {
@@ -38,6 +40,8 @@ namespace AssimpSample
 
         private float wallVal = 1.0f;
 
+        private float arrowVal = 2.0f;
+
         public AssimpScene Scene
         {
             get { return m_scene; }
@@ -61,6 +65,23 @@ namespace AssimpSample
             get { return m_yRotation; }
             set { m_yRotation = value; }
         }
+
+        /// <summary>
+        /// Identifikatori tekstura
+        /// </summary>
+        private enum TextureObjects { grass = 0, metal, mud };
+        private readonly int m_textureCount = Enum.GetNames(typeof(TextureObjects)).Length;
+
+
+        /// <summary>
+        /// Indentifikatori OpenGL tekstura
+        /// </summary>
+        private uint[] m_textures = null;
+
+        /// <summary>
+        /// Putanje do fajlova za teksture
+        /// </summary>
+        private string[] m_textureFiles = { "..//..//images//grass.jpg", "..//..//images/metal.jpg", "..//..//images/mud.jpg" };
 
 
         public float SceneDistance
@@ -121,6 +142,17 @@ namespace AssimpSample
             }
         }
 
+        public float arrowValue
+        {
+            get
+            {
+                return arrowVal;
+            }
+            set
+            {
+                arrowVal = value;
+            }
+        }
         public World(String scenePath, String sceneFileName, String scenePath1, String sceneFileName1, int width, int height, OpenGL gl)
         {
             this.m_scene = new AssimpScene(scenePath, sceneFileName, gl);
@@ -128,7 +160,7 @@ namespace AssimpSample
 
             this.m_width = width;
             this.m_height = height;
-
+            m_textures = new uint[m_textureCount];
         }
 
 
@@ -165,6 +197,34 @@ namespace AssimpSample
             m_scene.Initialize();
             m_strela.LoadScene();
             m_strela.Initialize();
+
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);     // Linearno filtriranje
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);     // Linearno filtriranje
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
+            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
+
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
+
+            gl.Enable(OpenGL.GL_TEXTURE_2D);
+
+            gl.GenTextures(m_textureCount, m_textures);
+            for (int i = 0; i < m_textureCount; ++i)
+            {
+                gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[i]);
+
+                Bitmap image = new Bitmap(m_textureFiles[i]);
+                image.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                Rectangle rect = new Rectangle(0, 0, image.Width, image.Height);
+               
+                BitmapData imageData = image.LockBits(rect, System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                                                      System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                gl.Build2DMipmaps(OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA8, image.Width, image.Height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, imageData.Scan0);
+                
+                image.UnlockBits(imageData);
+                image.Dispose();
+            }
+
         }
 
         /// <summary>
@@ -176,12 +236,12 @@ namespace AssimpSample
             float[] ambijentalnaKomponenta = { 0.3f, 0.3f, 0.3f, 1.0f };
             float[] difuznaKomponenta = { 0.7f, 0.7f, 0.7f, 1.0f };
             float[] lightPos0 = { -600.0f, 600.0f, 650.0f };
-            //pridruzivanje ambijentalne i difuzne komponente svetlosnom izvoru LIGHT0
+          
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_DIFFUSE, difuznaKomponenta);
 
-            //podesavanje cuttoff-a na 180 da bi svetlost bila tackasta
+          
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_SPOT_CUTOFF, 180.0f);
 
             gl.Enable(OpenGL.GL_LIGHTING);
@@ -200,13 +260,11 @@ namespace AssimpSample
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
-            // Podesi parametre reflektorkskog izvora
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 45.0f);
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
-            // Pozicioniraj svetlosni izvor
             gl.Enable(OpenGL.GL_NORMALIZE);
 
         }
@@ -220,9 +278,7 @@ namespace AssimpSample
             gl.LoadIdentity();
             gl.Perspective(60f, (double)width / height, 1f, 20000f);
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
-            gl.LoadIdentity();
-
-            
+            gl.LoadIdentity();   
 
         }
 
@@ -248,13 +304,8 @@ namespace AssimpSample
             m_scene.Draw();
             gl.PopMatrix();
 
-            gl.PushMatrix();
-            gl.Translate(750.0f, 300.0f, 0.0f);
-            gl.Scale(2.0f, 2.0f, 2.0f);
-            m_strela.Draw();
-            gl.PopMatrix();
+            drawArrow(gl);
 
-          
             drawCube1(gl);
             drawCube2(gl);
 
@@ -313,15 +364,36 @@ namespace AssimpSample
           
 
         }
+
+        public void drawArrow(OpenGL gl)
+        {
+
+            gl.PushMatrix();
+            gl.Translate(750.0f, 300.0f, 0.0f);
+            gl.Scale(arrowVal, arrowVal, 2.0f);
+            gl.Color(1.0f, 0.0f, 1.0f);
+
+
+            m_strela.Draw();
+
+            gl.PopMatrix();
+        }
         public void drawGround(OpenGL gl)
         {
             gl.PushMatrix();
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.grass]);
+            gl.Color(0.0f, 0.0f, 0.0f);
             gl.Begin(OpenGL.GL_QUADS);
-            gl.Color(1.0f, 0.0f, 0.0f);
-            gl.Vertex(-1000.0f, 0.0f, 1000.0f); //top left
-            gl.Vertex(1000.0f, 0.0f, 1000.0f); //top right
-            gl.Vertex(1000.0f, 0.0f, -1000.0f); //bottom right
-            gl.Vertex(-1000.0f, 0.0f, -1000.0f); //bottom left
+            gl.Color(0.5f, 0.5f, 0.5f);
+            gl.Normal(0.0f, -1.0f, 0.0f);
+            gl.TexCoord(0.0f, 0.0f);
+            gl.Vertex(-1000.0f, 0.0f, 1000.0f);
+            gl.TexCoord(0.0f, 1.0f);
+            gl.Vertex(1000.0f, 0.0f, 1000.0f);
+            gl.TexCoord(1.0f, 1.0f);
+            gl.Vertex(1000.0f, 0.0f, -1000.0f);
+            gl.TexCoord(1.0f, 0.0f);
+            gl.Vertex(-1000.0f, 0.0f, -1000.0f);
             gl.End();
             gl.PopMatrix();
         }
@@ -329,7 +401,7 @@ namespace AssimpSample
         public void drawTrack(OpenGL gl)
         {
             gl.PushMatrix();
-            gl.Color(0.0f, 0.0f, 1.0f);
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.mud]);
             gl.Begin(OpenGL.GL_QUADS);
             gl.Vertex(-100.0f, 100.0f, 1000.0f); //top left
             gl.Vertex(100.0f, 100.0f, 1000.0f); //top right
@@ -342,7 +414,7 @@ namespace AssimpSample
         public void drawCube1(OpenGL gl)
         {
             gl.PushMatrix();
-            //gl.Translate(1000.0f, 330.0f, 0.0f);
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.metal]);
             gl.Translate(targetValueTranslate, 330.0f, 0.0f);
             gl.Scale(100, 300, 1500);
             gl.Color(1.0f, 1.0f, 1.0f);
@@ -356,6 +428,7 @@ namespace AssimpSample
         public void drawCube2(OpenGL gl)
         {
             gl.PushMatrix();
+            gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.metal]);
             gl.Translate(-1000.0f, 330.0f, 0.0f);
             gl.Rotate(0.0f, wallVal, 0.0f);
             gl.Scale(100, 300, 1500);
