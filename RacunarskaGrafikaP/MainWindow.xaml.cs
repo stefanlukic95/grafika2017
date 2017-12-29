@@ -92,22 +92,43 @@ namespace RacunarskaGrafikaP
             {
                 case Key.F4: this.Close(); break;
                 case Key.K:
-                    if (m_world.RotationX >= -20.0f)
+                    if (!m_world.AnimationRunning)
                     {
-                        m_world.RotationX -= 5.0f;
+                        if (m_world.RotationX >= 5.0f)
+                        {
+                            m_world.RotationX -= 5.0f;
+                        }
                     }
                     break;
                 case Key.I:
-                    if (m_world.RotationX <= 65.0f)
+                    if (!m_world.AnimationRunning)
                     {
-                        m_world.RotationX += 5.0f;
+                        if (m_world.RotationX <= 45.0f)
+                        {
+                            m_world.RotationX += 5.0f;
+                        }
                     }
                     break;
-                case Key.J: m_world.RotationY -= 5.0f; break;
-                case Key.L: m_world.RotationY += 5.0f; break;
+                case Key.J:
+                    if (!m_world.AnimationRunning) { 
+                        if (m_world.RotationY >= -85.0f)
+                        {
+                            m_world.RotationY -= 5.0f;
+                        }
+                    }
+                    break;
+                case Key.L:
+                    if (!m_world.AnimationRunning)
+                    {
+                        if (m_world.RotationY <= 85.0f)
+                        {
+                            m_world.RotationY += 5.0f;
+                        }
+                    }
+                    break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
-
+                case Key.V: m_world.startAnimation(); break;
                 case Key.F2:
                     OpenFileDialog opfModel = new OpenFileDialog();
                     bool result = (bool)opfModel.ShowDialog();
@@ -131,55 +152,65 @@ namespace RacunarskaGrafikaP
         }
         private void targetValueChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            if (!m_world.AnimationRunning)
             {
-                float val = float.Parse(targetTranslateVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-                if (m_world != null)
+                try
                 {
-                    m_world.TargetValueTranslate = val;
+                    float val = float.Parse(targetTranslateVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+                    if (m_world != null)
+                    {
+                        m_world.TargetValueTranslate = val;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                catch (Exception ex)
+                {
+                    // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                }
             }
         }
 
         private void wallValueChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            if (!m_world.AnimationRunning)
             {
-                float val = float.Parse(wallVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-                if (m_world != null)
+                try
                 {
-                    m_world.wallValue = val;
+                    float val = float.Parse(wallVal.Text, CultureInfo.InvariantCulture.NumberFormat);
+
+                    if (m_world != null)
+                    {
+                        m_world.wallValue = val;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                catch (Exception ex)
+                {
+                    // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                }
             }
         }
 
         private void arrowValueChanged(object sender, TextChangedEventArgs e)
         {
-            try
+            if (!m_world.AnimationRunning)
             {
-                float val = float.Parse(arrowVal.Text, CultureInfo.InvariantCulture.NumberFormat);
-
-                if (m_world != null)
+                try
                 {
-                    m_world.arrowValue = val;
-                }
+                    float val = float.Parse(arrowVal.Text, CultureInfo.InvariantCulture.NumberFormat);
 
-            }
-            catch (Exception ex)
-            {
-                // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                    if (m_world != null)
+                    {
+                        m_world.arrowValue = val;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    // MessageBox.Show("Unesite broj:\n" + ex.Message, "GRESKA", MessageBoxButton.OK);
+                }
             }
         }
+        
         
     }
 }

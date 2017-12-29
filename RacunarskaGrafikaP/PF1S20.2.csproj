@@ -104,8 +104,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Model\Arrow shot.fbx" />
-    <None Include="Model\castle2.obj" />
+    <None Include="Model\Arrow shot.fbx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Model\castle2.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -119,9 +123,15 @@
     <Content Include="Dependencies\SharpGL.dll" />
     <Content Include="Dependencies\SharpGL.SceneGraph.dll" />
     <Content Include="Dependencies\SharpGL.WPF.dll" />
-    <Resource Include="Images\grass.jpg" />
-    <Resource Include="Images\metal.jpg" />
-    <Resource Include="Images\mud.jpg" />
+    <Resource Include="Images\grass.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\metal.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\mud.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Assimp;
 using System.IO;
 using System.Reflection;
@@ -12,6 +11,7 @@ using RacunarskaGrafikaP;
 using System.Windows.Documents;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Threading;
 
 namespace AssimpSample
 {
@@ -26,15 +26,14 @@ namespace AssimpSample
         private float m_yRotation = 0.0f;
 
         private float m_sceneDistance = 7000.0f;
-
+        private float m_xtranslate = 0.0f;
+        private float m_ytranslate = 0.0f;
+        
         private int m_width;
         private int m_height;
         private int m_depth;
 
-        private float ambientR = 0.0f;
-        private float ambientG = 0.0f;
-        private float ambientB = 0.3f;
-        private float ambientU = 1.0f;
+      
 
         private float targetValueTranslate = 1000.0f;
 
@@ -99,9 +98,31 @@ namespace AssimpSample
 
         bool m_culling = true;
 
-
+        public bool AnimationRunning
+        {
+            get
+            {
+                return animationRunning;
+            }
+            set
+            {
+                animationRunning = value;
+            }
+        }
         bool m_depthTesting = true;
 
+        //animacija
+        private DispatcherTimer timer1;
+        private DispatcherTimer timer2;
+
+        private bool animationRunning=false;
+
+        private float scaleArrow = 1.0f;
+        private float arrowXTranslate = 0.0f;
+        private float arrowYTranslate = 0.0f;
+        private float arrowZTranslate = 0.0f;
+        private float arrowXRotation = 0.0f;
+        private int arrowCounter = 0;
 
         public int Height
         {
@@ -164,6 +185,60 @@ namespace AssimpSample
         }
 
 
+        public void FireArrow(object sender, EventArgs e)
+        {
+
+            arrowYTranslate += 200;
+            if (arrowYTranslate > 4000)
+            {
+                arrowYTranslate = -250.0f;
+                arrowCounter += 1;
+            }
+            if (arrowCounter == 10)
+            {
+                timer2.Stop();
+                Reset();
+                animationRunning = false;
+            }
+        }
+
+        public void Reset()
+        {
+            m_xRotation = 0.0f;
+            m_yRotation = 0.0f;
+            m_sceneDistance = 4000.0f;
+            arrowCounter = 0;
+            arrowXRotation = 0;
+            arrowYTranslate = 0;
+            arrowZTranslate = 0;
+        }
+
+        public void PomeranjeKameruizZamak(object sender, EventArgs e)
+        {
+
+            this.m_sceneDistance += 50;
+            if (this.SceneDistance == +4000)
+            {
+                timer1.Stop();
+                this.timer2 = new DispatcherTimer();
+                timer2.Interval = TimeSpan.FromMilliseconds(20);
+                timer2.Tick += new EventHandler(FireArrow);
+                timer2.Start();
+            }
+
+        }
+   
+        public void startAnimation()
+        {  
+            this.timer1 = new DispatcherTimer();
+            m_sceneDistance = 100.0f;
+            m_ytranslate = 500;
+            timer1.Interval = TimeSpan.FromMilliseconds(20);
+            timer1.Tick += new EventHandler(PomeranjeKameruizZamak);
+            timer1.Start();
+            animationRunning = true;
+        }
+
         ~World()
         {
             this.Dispose(false);
@@ -191,7 +266,7 @@ namespace AssimpSample
 
 
             setupLighting(gl);
-            setupTargetLight(gl);
+           
 
             m_scene.LoadScene();
             m_scene.Initialize();
@@ -220,7 +295,12 @@ namespace AssimpSample
                                                       System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 gl.Build2DMipmaps(OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA8, image.Width, image.Height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, imageData.Scan0);
-                
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);		// Linear Filtering
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);		// Linear Filtering
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
+                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
+                gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
+
                 image.UnlockBits(imageData);
                 image.Dispose();
             }
@@ -233,8 +313,8 @@ namespace AssimpSample
         /// <param name="gl"></param>
         public void setupLighting(OpenGL gl)
         {
-            float[] ambijentalnaKomponenta = { 0.3f, 0.3f, 0.3f, 1.0f };
-            float[] difuznaKomponenta = { 0.7f, 0.7f, 0.7f, 1.0f };
+            float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
+            float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] lightPos0 = { -600.0f, 600.0f, 650.0f };
           
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
@@ -252,8 +332,8 @@ namespace AssimpSample
 
         public void setupTargetLight(OpenGL gl)
         {
-            float[] ambijentalnaKomponenta = { ambientR, ambientG, ambientB, ambientU };
-            float[] difuznaKomponenta = { 0.0f, 0.0f, 0.7f, 1.0f };
+            float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
+            float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] lightPos1 = { 200.0f, 500.0f, -700.0f, 1.0f };
             float[] smer = { 0.0f, -1.0f, 0.0f };
 
@@ -292,7 +372,7 @@ namespace AssimpSample
             gl.LookAt(0.0f, 1000.0f, 300.0f,
                    0.0f, 950.0f, 0.0f,
                    0.0f, 1.0f, 0.0f);
-            gl.Translate(0.0f, 0.0f, -m_sceneDistance);
+            gl.Translate(m_xtranslate, m_ytranslate, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
 
@@ -369,8 +449,9 @@ namespace AssimpSample
         {
 
             gl.PushMatrix();
-            gl.Translate(750.0f, 300.0f, 0.0f);
+            gl.Translate(arrowXTranslate, arrowYTranslate, arrowZTranslate);
             gl.Scale(arrowVal, arrowVal, 2.0f);
+            gl.Rotate(0.0f, 0.0f, 0.0f + arrowXRotation);
             gl.Color(1.0f, 0.0f, 1.0f);
 
 
