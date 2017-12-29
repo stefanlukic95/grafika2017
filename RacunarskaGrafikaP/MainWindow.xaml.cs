@@ -91,8 +91,18 @@ namespace RacunarskaGrafikaP
             switch (e.Key)
             {
                 case Key.F4: this.Close(); break;
-                case Key.I: m_world.RotationX -= 5.0f; break;
-                case Key.K: m_world.RotationX += 5.0f; break;
+                case Key.K:
+                    if (m_world.RotationX >= -20.0f)
+                    {
+                        m_world.RotationX -= 5.0f;
+                    }
+                    break;
+                case Key.I:
+                    if (m_world.RotationX <= 65.0f)
+                    {
+                        m_world.RotationX += 5.0f;
+                    }
+                    break;
                 case Key.J: m_world.RotationY -= 5.0f; break;
                 case Key.L: m_world.RotationY += 5.0f; break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;

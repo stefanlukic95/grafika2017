@@ -289,8 +289,8 @@ namespace AssimpSample
             gl.PushMatrix();
             gl.MatrixMode(OpenGL.GL_MODELVIEW);
             gl.LoadIdentity();
-            gl.LookAt(0.0f, 670.0f, 350.0f,
-                   0.0f, 600.0f, 0.0f,
+            gl.LookAt(0.0f, 1000.0f, 300.0f,
+                   0.0f, 950.0f, 0.0f,
                    0.0f, 1.0f, 0.0f);
             gl.Translate(0.0f, 0.0f, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
