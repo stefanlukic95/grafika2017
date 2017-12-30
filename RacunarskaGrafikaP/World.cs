@@ -68,7 +68,7 @@ namespace AssimpSample
         /// <summary>
         /// Identifikatori tekstura
         /// </summary>
-        private enum TextureObjects { grass = 0, metal, mud };
+        private enum TextureObjects { grass , metal, mud };
         private readonly int m_textureCount = Enum.GetNames(typeof(TextureObjects)).Length;
 
 
@@ -277,7 +277,6 @@ namespace AssimpSample
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);     // Linearno filtriranje
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
             gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
-
             gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
 
             gl.Enable(OpenGL.GL_TEXTURE_2D);
@@ -295,11 +294,7 @@ namespace AssimpSample
                                                       System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 gl.Build2DMipmaps(OpenGL.GL_TEXTURE_2D, (int)OpenGL.GL_RGBA8, image.Width, image.Height, OpenGL.GL_BGRA, OpenGL.GL_UNSIGNED_BYTE, imageData.Scan0);
-                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_LINEAR);		// Linear Filtering
-                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_LINEAR);		// Linear Filtering
-                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
-                gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
-                gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
+                
 
                 image.UnlockBits(imageData);
                 image.Dispose();
@@ -381,6 +376,7 @@ namespace AssimpSample
 
 
             gl.PushMatrix();
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
             m_scene.Draw();
             gl.PopMatrix();
 
@@ -449,6 +445,7 @@ namespace AssimpSample
         {
 
             gl.PushMatrix();
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
             gl.Translate(arrowXTranslate, arrowYTranslate, arrowZTranslate);
             gl.Scale(arrowVal, arrowVal, 2.0f);
             gl.Rotate(0.0f, 0.0f, 0.0f + arrowXRotation);
@@ -484,10 +481,16 @@ namespace AssimpSample
             gl.PushMatrix();
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.mud]);
             gl.Begin(OpenGL.GL_QUADS);
-            gl.Vertex(-100.0f, 100.0f, 1000.0f); //top left
-            gl.Vertex(100.0f, 100.0f, 1000.0f); //top right
-            gl.Vertex(100.0f, -100.0f, -1000.0f); //bottom right
-            gl.Vertex(-100.0f, -100.0f, -1000.0f); //bottom left
+            gl.Normal(0.0f, -1.0f, 0.0f);
+
+            gl.Vertex(-200.0f, 200.0f, 1000.0f); //top left
+            gl.TexCoord(0.0f, 0.0f);
+            gl.Vertex(200.0f, 200.0f, 1000.0f); //top right
+            gl.TexCoord(0.0f, 1.0f);
+            gl.Vertex(200.0f, -200.0f, -1000.0f); //bottom right
+            gl.TexCoord(1.0f, 1.0f);
+            gl.Vertex(-200.0f, -200.0f, -1000.0f); //bottom left
+            gl.TexCoord(1.0f, 0.0f);
             gl.End();
             gl.PopMatrix();
         }
@@ -495,6 +498,7 @@ namespace AssimpSample
         public void drawCube1(OpenGL gl)
         {
             gl.PushMatrix();
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.metal]);
             gl.Translate(targetValueTranslate, 330.0f, 0.0f);
             gl.Scale(100, 300, 1500);
@@ -509,6 +513,7 @@ namespace AssimpSample
         public void drawCube2(OpenGL gl)
         {
             gl.PushMatrix();
+            gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
             gl.BindTexture(OpenGL.GL_TEXTURE_2D, m_textures[(int)TextureObjects.metal]);
             gl.Translate(-1000.0f, 330.0f, 0.0f);
             gl.Rotate(0.0f, wallVal, 0.0f);
