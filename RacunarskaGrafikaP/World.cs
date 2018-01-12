@@ -265,8 +265,8 @@ namespace AssimpSample
             gl.ColorMaterial(OpenGL.GL_FRONT, OpenGL.GL_AMBIENT_AND_DIFFUSE);
 
 
-            setupLighting(gl);
-           
+           // setupLighting(gl);
+            //setupTargetLight(gl);
 
             m_scene.LoadScene();
             m_scene.Initialize();
@@ -310,7 +310,7 @@ namespace AssimpSample
         {
             float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
-            float[] lightPos0 = { -600.0f, 600.0f, 650.0f };
+            float[] lightPos0 = { -1000.0f, 1000.0f, 0.0f };
           
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_POSITION, lightPos0);
             gl.Light(OpenGL.GL_LIGHT0, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
@@ -321,7 +321,6 @@ namespace AssimpSample
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT0);
-
             gl.Enable(OpenGL.GL_NORMALIZE);
         }
 
@@ -329,14 +328,14 @@ namespace AssimpSample
         {
             float[] ambijentalnaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] difuznaKomponenta = { 1.0f, 1.0f, 1.0f, 1.0f };
-            float[] lightPos1 = { 200.0f, 500.0f, -700.0f, 1.0f };
+            float[] lightPos1 = { 0.0f, 1200.0f, 0.0f, 1.0f };
             float[] smer = { 0.0f, -1.0f, 0.0f };
 
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_POSITION, lightPos1);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 45.0f);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 15.0f);
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
@@ -387,7 +386,8 @@ namespace AssimpSample
 
 
             draw3DText(gl);
-
+            setupLighting(gl);
+            setupTargetLight(gl);
             gl.PopMatrix();
            
             gl.Flush();
@@ -448,7 +448,7 @@ namespace AssimpSample
             gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
             gl.Translate(arrowXTranslate, arrowYTranslate, arrowZTranslate);
             gl.Scale(arrowVal, arrowVal, 2.0f);
-            gl.Rotate(0.0f, 0.0f, 0.0f + arrowXRotation);
+            gl.Rotate(180.0f, 0.0f, 0.0f + arrowXRotation);
             gl.Color(1.0f, 0.0f, 1.0f);
 
 

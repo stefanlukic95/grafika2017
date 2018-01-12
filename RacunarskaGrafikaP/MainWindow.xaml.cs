@@ -110,21 +110,14 @@ namespace RacunarskaGrafikaP
                     }
                     break;
                 case Key.J:
-                    if (!m_world.AnimationRunning) { 
-                        if (m_world.RotationY >= -85.0f)
-                        {
+                   
                             m_world.RotationY -= 5.0f;
-                        }
-                    }
+                    
                     break;
                 case Key.L:
-                    if (!m_world.AnimationRunning)
-                    {
-                        if (m_world.RotationY <= 85.0f)
-                        {
+                    
                             m_world.RotationY += 5.0f;
-                        }
-                    }
+                    
                     break;
                 case Key.Add: m_world.SceneDistance -= 700.0f; break;
                 case Key.Subtract: m_world.SceneDistance += 700.0f; break;
