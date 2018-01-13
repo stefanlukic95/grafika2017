@@ -335,7 +335,7 @@ namespace AssimpSample
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_AMBIENT, ambijentalnaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_DIFFUSE, difuznaKomponenta);
             gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_DIRECTION, smer);
-            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 15.0f);
+            gl.Light(OpenGL.GL_LIGHT1, OpenGL.GL_SPOT_CUTOFF, 45.0f);
 
             gl.Enable(OpenGL.GL_LIGHTING);
             gl.Enable(OpenGL.GL_LIGHT1);
@@ -369,13 +369,13 @@ namespace AssimpSample
             gl.Translate(m_xtranslate, m_ytranslate, -m_sceneDistance);
             gl.Rotate(m_xRotation, 1.0f, 0.0f, 0.0f);
             gl.Rotate(m_yRotation, 0.0f, 1.0f, 0.0f);
-
+          
             drawGround(gl);
             drawTrack(gl);
 
-
             gl.PushMatrix();
             gl.TexEnv(OpenGL.GL_TEXTURE_ENV, OpenGL.GL_TEXTURE_ENV_MODE, OpenGL.GL_MODULATE);
+           
             m_scene.Draw();
             gl.PopMatrix();
 
@@ -383,11 +383,11 @@ namespace AssimpSample
 
             drawCube1(gl);
             drawCube2(gl);
-
-
             draw3DText(gl);
+
             setupLighting(gl);
             setupTargetLight(gl);
+           
             gl.PopMatrix();
            
             gl.Flush();
